@@ -1,0 +1,36 @@
+{
+  "name": "auth-jwt",
+  "version": "1.0.0",
+  "description": "Autentication with Jwt",
+  "main": "index.js",
+  "author": "Fabricio Cipriano",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsx watch src/index.js",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "yarn format:check && yarn lint",
+    "fix": "yarn lint:fix && yarn format",
+    "prepare": "lefthook install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.3.1",
+    "@commitlint/config-conventional": "^20.3.1",
+    "@types/node": "^25.0.9",
+    "@types/pg": "^8.16.0",
+    "lefthook": "^2.0.15",
+    "oxlint": "^1.39.0",
+    "prettier": "^3.8.0",
+    "prisma": "^7.2.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.2.0",
+    "@prisma/client": "^7.2.0",
+    "dotenv": "^17.2.3",
+    "pg": "^8.17.1"
+  }
+}
