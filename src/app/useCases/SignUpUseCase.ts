@@ -1,50 +1,42 @@
-import { compare } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
-import { prisma } from '../../lib/prisma';
-import { env } from '../config/env';
-import { InvalidCredentials } from '../errors/InvalidCredentials';
+import { hash } from 'bcryptjs';
+import { AccountAlreadyExists } from '../errors/AccountAlreadyExists';
+import { prisma } from '../lib/prisma';
 
 interface IInput {
+  name: string;
   email: string;
   password: string;
 }
 
-interface IOutput {
-  accessToken: string;
-}
+type IOutput = void;
 
 export class SignUpUseCase {
+  constructor(private readonly salt: number) {}
+
   async execute({
     email,
+    name,
     password,
   }: IInput): Promise<IOutput> {
-    const account = await prisma.account.findUnique({
-      where: {
+    const accountAlredyExists =
+      await prisma.account.findUnique({
+        where: {
+          email,
+        },
+      });
+
+    if (accountAlredyExists) {
+      throw new AccountAlreadyExists();
+    }
+
+    const hashedPassword = await hash(password, this.salt);
+
+    await prisma.account.create({
+      data: {
         email,
+        name,
+        password: hashedPassword,
       },
     });
-
-    if (!account) {
-      throw new InvalidCredentials();
-    }
-
-    const isPasswordValid = await compare(
-      password,
-      account.password,
-    );
-
-    if (!isPasswordValid) {
-      throw new InvalidCredentials();
-    }
-
-    const accessToken = sign(
-      { sub: account.id },
-      env.jwtSecret,
-      { expiresIn: '1d' },
-    );
-
-    return {
-      accessToken,
-    };
   }
 }
