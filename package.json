@@ -4,9 +4,10 @@
   "description": "Autentication with Jwt",
   "main": "index.js",
   "author": "Fabricio Cipriano",
+  "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "tsx watch src/index.js",
+    "dev": "tsx watch src/server/index.ts",
     "lint": "oxlint .",
     "lint:fix": "oxlint --fix .",
     "format": "prettier --write .",
