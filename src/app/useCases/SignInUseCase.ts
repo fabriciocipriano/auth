@@ -38,9 +38,12 @@ export class SignInUseCase {
     }
 
     const accessToken = jwt.sign(
-      { sub: account.id },
+      {
+        sub: account.id,
+        role: account.role,
+      },
       env.jwtSecret,
-      { expiresIn: '1d' },
+      { expiresIn: '30d' },
     );
 
     return {
