@@ -6,6 +6,7 @@ interface IInput {
   name: string;
   email: string;
   password: string;
+  roleId: string;
 }
 
 type IOutput = void;
@@ -17,6 +18,7 @@ export class SignUpUseCase {
     email,
     name,
     password,
+    roleId,
   }: IInput): Promise<IOutput> {
     const accountAlredyExists =
       await prisma.account.findUnique({
@@ -36,7 +38,7 @@ export class SignUpUseCase {
         email,
         name,
         password: hashedPassword,
-        role: 'USER',
+        roleId,
       },
     });
   }
