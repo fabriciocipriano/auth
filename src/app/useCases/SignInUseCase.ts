@@ -1,8 +1,10 @@
 import { compare } from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { EXP_TIME } from '../config/constants';
 import { env } from '../config/env';
 import { InvalidCredentials } from '../errors/InvalidCredentials';
 import { prisma } from '../lib/prisma';
+import RefreshTokenRepository from '../repositories/RefreshTokenRepository';
 
 interface IInput {
   email: string;
@@ -11,6 +13,7 @@ interface IInput {
 
 interface IOutput {
   accessToken: string;
+  refreshToken: string;
 }
 
 export class SignInUseCase {
@@ -43,11 +46,21 @@ export class SignInUseCase {
         role: account.roleId,
       },
       env.jwtSecret,
-      { expiresIn: '30d' },
+      { expiresIn: '10s' },
     );
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + EXP_TIME);
+
+    const { id: refreshToken } =
+      await RefreshTokenRepository.create(
+        account.id,
+        expiresAt,
+      );
 
     return {
       accessToken,
+      refreshToken,
     };
   }
 }

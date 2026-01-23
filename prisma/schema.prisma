@@ -14,7 +14,8 @@ model Account {
   password String
   roleId   String @map("role_id") @db.Uuid
 
-  role Role @relation(fields: [roleId], references: [id])
+  role          Role           @relation(fields: [roleId], references: [id])
+  refreshTokens RefreshToken[]
 
   @@map("accounts")
 }
@@ -48,4 +49,16 @@ model RolePermission {
 
   @@id([roleId, permissionCode])
   @@map("role_permissions")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  accountId String   @map("account_id") @db.Uuid
+  issuedAt  DateTime @default(now())
+  expiresAt DateTime
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([id])
+  @@map("refresh_tokens")
 }
